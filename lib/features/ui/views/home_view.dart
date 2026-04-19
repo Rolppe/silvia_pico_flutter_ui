@@ -7,7 +7,7 @@ import '../layouts/landscape_layout.dart';
 import '../../../core/providers.dart';
 
 // ============================================================================
-// HOME VIEW - CLEAN VERSION (no rotation flash fixes)
+// HOME VIEW - SIMPLEST POSSIBLE VERSION
 // ============================================================================
 
 class HomeView extends ConsumerStatefulWidget {
@@ -23,25 +23,23 @@ class _HomeViewState extends ConsumerState<HomeView> {
   void initState() {
     super.initState();
     WakelockPlus.enable();
-    print("🔒 WakelockPlus enabled");
   }
 
   @override
   void dispose() {
     WakelockPlus.disable();
-    print("🔓 WakelockPlus disabled");
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    // Käynnistetään BLE-skannaus automaattisesti
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(bleNotifierProvider.notifier).startScan();
     });
 
+    final orientation = MediaQuery.of(context).orientation;
+
     return Scaffold(
-      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: const Text('Silvia Pico'),
         actions: [
@@ -51,15 +49,9 @@ class _HomeViewState extends ConsumerState<HomeView> {
           ),
         ],
       ),
-      body: OrientationBuilder(
-        builder: (context, orientation) {
-          if (orientation == Orientation.landscape) {
-            return const LandscapeLayout();
-          } else {
-            return const PortraitLayout();
-          }
-        },
-      ),
+      body: orientation == Orientation.landscape
+          ? const LandscapeLayout()
+          : const PortraitLayout(),
     );
   }
 }
