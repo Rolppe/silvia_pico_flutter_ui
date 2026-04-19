@@ -7,7 +7,7 @@ import '../layouts/landscape_layout.dart';
 import '../../../core/providers.dart';
 
 // ============================================================================
-// HOME VIEW - SIMPLEST POSSIBLE VERSION
+// HOME VIEW - PREVIOUS VERSION (OrientationBuilder)
 // ============================================================================
 
 class HomeView extends ConsumerStatefulWidget {
@@ -37,8 +37,6 @@ class _HomeViewState extends ConsumerState<HomeView> {
       ref.read(bleNotifierProvider.notifier).startScan();
     });
 
-    final orientation = MediaQuery.of(context).orientation;
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Silvia Pico'),
@@ -49,9 +47,15 @@ class _HomeViewState extends ConsumerState<HomeView> {
           ),
         ],
       ),
-      body: orientation == Orientation.landscape
-          ? const LandscapeLayout()
-          : const PortraitLayout(),
+      body: OrientationBuilder(
+        builder: (context, orientation) {
+          if (orientation == Orientation.landscape) {
+            return const LandscapeLayout();
+          } else {
+            return const PortraitLayout();
+          }
+        },
+      ),
     );
   }
 }

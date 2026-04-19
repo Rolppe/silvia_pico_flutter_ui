@@ -8,7 +8,7 @@ import '../widgets/controls_widget.dart';
 import '../widgets/graph_widget.dart';
 
 // ============================================================================
-// RESPONSIVE LAYOUT - VERY STRICT VERSION
+// RESPONSIVE LAYOUT - SIMPLE & STABLE
 // ============================================================================
 
 class ResponsiveLayout extends ConsumerWidget {
@@ -20,15 +20,14 @@ class ResponsiveLayout extends ConsumerWidget {
     final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
 
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(isLandscape ? 16 : 24),
       child: isLandscape
-          ? _landscape(data)
-          : _portrait(data),
+          ? _buildLandscape(data)
+          : _buildPortrait(data),
     );
   }
 
-  // Pysty
-  Widget _portrait(MachineStatus data) {
+  Widget _buildPortrait(MachineStatus data) {
     return Column(
       children: [
         Row(
@@ -52,11 +51,10 @@ class ResponsiveLayout extends ConsumerWidget {
     );
   }
 
-  // Vaaka - TIUKKA VERSIO
-  Widget _landscape(MachineStatus data) {
+  Widget _buildLandscape(MachineStatus data) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Vasen puoli (kapea)
         Expanded(
           flex: 3,
           child: Column(
@@ -68,16 +66,12 @@ class ResponsiveLayout extends ConsumerWidget {
                   Expanded(child: ValueDisplay()),
                 ],
               ),
-              const Spacer(),
+              const SizedBox(height: 40),
               ControlsWidget(),
-              const Spacer(),
             ],
           ),
         ),
-
         const SizedBox(width: 20),
-
-        // Oikea puoli (iso graafi)
         Expanded(
           flex: 7,
           child: GraphWidget(
