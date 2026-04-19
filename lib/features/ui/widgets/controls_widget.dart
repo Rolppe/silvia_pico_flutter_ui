@@ -41,9 +41,9 @@ class ControlsWidget extends ConsumerWidget {
           title: const Text('Brew temperature'),
           subtitle: Slider(
             value: data.brewTemperature.clamp(88.0, 106.0),
-            min: 88,
+            min: 92,
             max: 106,
-            divisions: 36,
+            divisions: 14,
             label: '${data.brewTemperature.toStringAsFixed(1)}°C',
             onChanged: (val) {
               // Lähetetään komento heti kun käyttäjä vetää

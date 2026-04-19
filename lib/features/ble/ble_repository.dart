@@ -40,22 +40,25 @@ class BLERepository {
     });
   }
 
-  // ====================== CONNECT ======================
+  // ====================== CONNECT (flutter_blue_plus 2.x) ======================
   Future<void> _connectToDevice(BluetoothDevice device) async {
-    // Jos jo yhdistetty samaan laitteeseen, älä yritä uudestaan
     if (_device?.remoteId == device.remoteId && isConnected) return;
 
     try {
       _device = device;
-      await device.connect(autoConnect: false);
+
+      await device.connect(
+        timeout: const Duration(seconds: 15),
+        license: License.free,           // ← PAKOLLINEN uusimmassa versiossa
+      );
+
       print("✅ Connect onnistui!");
 
       _connectionController.add(true);
 
-      // Kuuntele disconnectionia luotettavasti
       device.connectionState.listen((state) {
         if (state == BluetoothConnectionState.disconnected) {
-          print("❌ Laite irtosi (power off tai signaali katosi)");
+          print("❌ Laite irtosi");
           _device = null;
           _connectionController.add(false);
         }
