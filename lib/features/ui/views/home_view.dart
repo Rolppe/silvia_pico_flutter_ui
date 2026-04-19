@@ -7,7 +7,7 @@ import '../layouts/landscape_layout.dart';
 import '../../../core/providers.dart';
 
 // ============================================================================
-// HOME VIEW - FAST BLACK OVERLAY DURING ROTATION
+// HOME VIEW - CLEAN VERSION (no rotation flash fixes)
 // ============================================================================
 
 class HomeView extends ConsumerStatefulWidget {
@@ -18,25 +18,24 @@ class HomeView extends ConsumerStatefulWidget {
 }
 
 class _HomeViewState extends ConsumerState<HomeView> {
-  bool _showBlackScreen = false;
 
   @override
   void initState() {
     super.initState();
     WakelockPlus.enable();
+    print("🔒 WakelockPlus enabled");
   }
 
   @override
   void dispose() {
     WakelockPlus.disable();
+    print("🔓 WakelockPlus disabled");
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final orientation = MediaQuery.of(context).orientation;
-
-    // Käynnistetään BLE
+    // Käynnistetään BLE-skannaus automaattisesti
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(bleNotifierProvider.notifier).startScan();
     });
@@ -52,44 +51,15 @@ class _HomeViewState extends ConsumerState<HomeView> {
           ),
         ],
       ),
-      body: Stack(
-        children: [
-          // Molemmat layoutit pidetään muistissa
-          IndexedStack(
-            index: orientation == Orientation.landscape ? 1 : 0,
-            children: const [
-              PortraitLayout(),
-              LandscapeLayout(),
-            ],
-          ),
-
-          // Musta ruutu — aktivoituu mahdollisimman aikaisin
-          AnimatedOpacity(
-            opacity: _showBlackScreen ? 1.0 : 0.0,
-            duration: const Duration(milliseconds: 40),     // erittäin nopea fade-in
-            child: Container(color: Colors.black),
-          ),
-        ],
+      body: OrientationBuilder(
+        builder: (context, orientation) {
+          if (orientation == Orientation.landscape) {
+            return const LandscapeLayout();
+          } else {
+            return const PortraitLayout();
+          }
+        },
       ),
     );
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    // Tämä kutsutaan aina kun orientation muuttuu
-    setState(() {
-      _showBlackScreen = true;
-    });
-
-    // Poistetaan musta ruutu nopeasti kun uusi layout on valmis
-    Future.delayed(const Duration(milliseconds: 280), () {
-      if (mounted) {
-        setState(() {
-          _showBlackScreen = false;
-        });
-      }
-    });
   }
 }

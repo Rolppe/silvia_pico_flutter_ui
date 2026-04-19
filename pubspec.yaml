@@ -12,8 +12,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_blue_plus: ^1.36.8      # ← Palautettu vanhaan toimivaan versioon
-  fl_chart: ^1.2.0
+  flutter_blue_plus: ^1.36.8
+  fl_chart: ^1.2.0                    # <-- Päivitetty
   flutter_riverpod: ^2.6.1
   json_annotation: ^4.9.0
   freezed_annotation: ^2.4.4
