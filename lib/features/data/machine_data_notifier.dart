@@ -40,8 +40,9 @@ class MachineDataNotifier extends Notifier<MachineStatus> {
       final isBrewingNow = _brewingModes.contains(updated.brewMode);
       final wasBrewingBefore = _brewingModes.contains(previousMode);
 
-      if (isBrewingNow && !wasBrewingBefore) _startBrewTimer();
-      else if (updated.brewMode == 'IDLE') {
+      if (isBrewingNow && !wasBrewingBefore) {
+        _startBrewTimer();
+      } else if (updated.brewMode == 'IDLE') {
         _stopBrewTimer();
         _resetBrewTimerAfterDelay();
       }

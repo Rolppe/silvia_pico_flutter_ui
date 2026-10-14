@@ -11,7 +11,6 @@ class BLERepository {
   final Guid commandCharUUID = Guid('00002A2A-0000-1000-8000-00805F9B34FB');
 
   BluetoothDevice? _device;
-  BluetoothCharacteristic? _dataCharacteristic;
   BluetoothCharacteristic? _commandCharacteristic;
 
   final _connectionController = StreamController<bool>.broadcast();
@@ -80,7 +79,6 @@ class BLERepository {
         if (service.uuid == serviceUUID) {
           for (var char in service.characteristics) {
             if (char.uuid == dataCharUUID) {
-              _dataCharacteristic = char;
               await char.setNotifyValue(true);
               char.onValueReceived.listen((value) {
                 if (value.isNotEmpty) {

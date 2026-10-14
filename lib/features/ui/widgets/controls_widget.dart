@@ -21,19 +21,19 @@ class ControlsWidget extends ConsumerWidget {
           title: const Text('Pre-infusion'),
           value: data.preInfusionOn,
           onChanged: (val) => ble.sendCommand('pre:${val ? "on" : "off"}'),
-          activeColor: Colors.green,
+          activeThumbColor: Colors.green,
         ),
         SwitchListTile(
           title: const Text('Soft pressure release'),
           value: data.softPressureReleaseOn,
           onChanged: (val) => ble.sendCommand('spr:${val ? "on" : "off"}'),
-          activeColor: Colors.green,
+          activeThumbColor: Colors.green,
         ),
         SwitchListTile(
           title: const Text('Fast heatup'),
           value: data.fastHeatupOn,
           onChanged: (val) => ble.sendCommand('fhu:${val ? "on" : "off"}'),
-          activeColor: Colors.green,
+          activeThumbColor: Colors.green,
         ),
 
         // BREW TEMPERATURE SÄÄDIN – NYT TOIMII
