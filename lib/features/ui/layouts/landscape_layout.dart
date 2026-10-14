@@ -40,7 +40,7 @@ class LandscapeLayout extends ConsumerWidget {
                 child: Column(
                   children: [
                     Text('Pressure (bar)', style: Theme.of(context).textTheme.labelSmall),
-                    Text('${data.boilerPressure.toStringAsFixed(1)}',
+                    Text(data.boilerPressure.toStringAsFixed(1),
                         style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Colors.blue)),
                   ],
                 ),

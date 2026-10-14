@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
 class BLERepository {
@@ -10,7 +11,6 @@ class BLERepository {
   final Guid commandCharUUID = Guid('00002A2A-0000-1000-8000-00805F9B34FB');
 
   BluetoothDevice? _device;
-  BluetoothCharacteristic? _dataCharacteristic;
   BluetoothCharacteristic? _commandCharacteristic;
 
   final _connectionController = StreamController<bool>.broadcast();
@@ -32,7 +32,7 @@ class BLERepository {
     FlutterBluePlus.scanResults.listen((results) {
       for (var result in results) {
         if (result.device.platformName == targetDeviceName) {
-          print("✅ Löydettiin EspressoPico – yhdistetään...");
+          debugPrint("✅ Löydettiin EspressoPico – yhdistetään...");
           _connectToDevice(result.device);
           return;
         }
@@ -48,14 +48,14 @@ class BLERepository {
     try {
       _device = device;
       await device.connect(autoConnect: false);
-      print("✅ Connect onnistui!");
+      debugPrint("✅ Connect onnistui!");
 
       _connectionController.add(true);
 
       // Kuuntele disconnectionia luotettavasti
       device.connectionState.listen((state) {
         if (state == BluetoothConnectionState.disconnected) {
-          print("❌ Laite irtosi (power off tai signaali katosi)");
+          debugPrint("❌ Laite irtosi (power off tai signaali katosi)");
           _device = null;
           _connectionController.add(false);
         }
@@ -64,7 +64,7 @@ class BLERepository {
       await Future.delayed(const Duration(milliseconds: 800));
       await _discoverServices();
     } catch (e) {
-      print("❌ Connect epäonnistui: $e");
+      debugPrint("❌ Connect epäonnistui: $e");
       _device = null;
       _connectionController.add(false);
     }
@@ -79,7 +79,6 @@ class BLERepository {
         if (service.uuid == serviceUUID) {
           for (var char in service.characteristics) {
             if (char.uuid == dataCharUUID) {
-              _dataCharacteristic = char;
               await char.setNotifyValue(true);
               char.onValueReceived.listen((value) {
                 if (value.isNotEmpty) {
@@ -96,7 +95,7 @@ class BLERepository {
         }
       }
     } catch (e) {
-      print("❌ Service discovery error: $e");
+      debugPrint("❌ Service discovery error: $e");
     }
   }
 

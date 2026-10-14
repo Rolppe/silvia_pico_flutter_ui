@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:silvia_pico_ui/models/machine_status.dart';
 import 'package:silvia_pico_ui/models/data_point.dart';
@@ -14,7 +15,7 @@ class MachineDataNotifier extends Notifier<MachineStatus> {
   MachineStatus build() {
     final repo = ref.watch(bleRepositoryProvider);
     _startTime ??= DateTime.now();
-    print("🔄 [Notifier] build() – startTime asetettu");
+    debugPrint("🔄 [Notifier] build() – startTime asetettu");
 
     repo.dataStream.listen(_updateFromJson);
     ref.onDispose(() => _brewTimerTask?.cancel());
@@ -22,7 +23,7 @@ class MachineDataNotifier extends Notifier<MachineStatus> {
   }
 
   void _updateFromJson(Map<String, dynamic> json) {
-    print("📥 [Notifier] JSON saapui: $json");
+    debugPrint("📥 [Notifier] JSON saapui: $json");
     try {
       final previousMode = state.brewMode;
       final updated = state.copyWith(
@@ -39,15 +40,16 @@ class MachineDataNotifier extends Notifier<MachineStatus> {
       final isBrewingNow = _brewingModes.contains(updated.brewMode);
       final wasBrewingBefore = _brewingModes.contains(previousMode);
 
-      if (isBrewingNow && !wasBrewingBefore) _startBrewTimer();
-      else if (updated.brewMode == 'IDLE') {
+      if (isBrewingNow && !wasBrewingBefore) {
+        _startBrewTimer();
+      } else if (updated.brewMode == 'IDLE') {
         _stopBrewTimer();
         _resetBrewTimerAfterDelay();
       }
 
       if (!updated.isGraphPaused && _startTime != null) {
         final time = DateTime.now().difference(_startTime!).inMilliseconds / 1000.0;
-        print("⏱️ [Notifier] currentTime = $time s");
+        debugPrint("⏱️ [Notifier] currentTime = $time s");
 
         final newTemp = List<DataPoint>.from(updated.temperatureData)..add(DataPoint(time: time, value: updated.boilerTemperature));
         final newPress = List<DataPoint>.from(updated.pressureData)..add(DataPoint(time: time, value: updated.boilerPressure));
@@ -64,7 +66,7 @@ class MachineDataNotifier extends Notifier<MachineStatus> {
         state = updated;
       }
     } catch (e) {
-      print("❌ [Notifier] JSON-virhe: $e");
+      debugPrint("❌ [Notifier] JSON-virhe: $e");
     }
   }
 
@@ -86,7 +88,7 @@ class MachineDataNotifier extends Notifier<MachineStatus> {
   void pauseGraph() => state = state.copyWith(isGraphPaused: true);
   void resetGraphForNewSession() {
     _startTime = DateTime.now();
-    print("🔄 [Notifier] Käyttäjä nollasi graafin");
+    debugPrint("🔄 [Notifier] Käyttäjä nollasi graafin");
     state = const MachineStatus(
       temperatureData: [],
       pressureData: [],
