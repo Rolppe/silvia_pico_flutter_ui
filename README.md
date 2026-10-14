@@ -1,17 +1,21 @@
-# silvia_pico_ui
+# silvia_pico_flutter_ui
 
-A new Flutter project.
+[![CI](https://github.com/Rolppe/silvia_pico_flutter_ui/actions/workflows/ci.yml/badge.svg)](https://github.com/Rolppe/silvia_pico_flutter_ui/actions/workflows/ci.yml)
 
-## Getting Started
+Flutter UI for EspressoPico, a Raspberry Pi Pico controller for a Rancilio Silvia espresso machine.
+The app connects to the controller over Bluetooth LE and shows boiler temperature, pressure and pump
+ratio with real-time graphs. The code was written with AI assistance.
 
-This project is a starting point for a Flutter application.
+- State: Riverpod (`lib/core/providers.dart`), immutable models with freezed (`lib/models/`)
+- Bluetooth: flutter_blue_plus (`lib/features/ble/`)
+- Graphs: fl_chart (`lib/features/ui/widgets/graph_widget.dart`)
 
-A few resources to get you started if this is your first Flutter project:
+## Development
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+```sh
+flutter pub get
+flutter analyze
+flutter test
+```
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+CI runs the same three commands on GitHub Actions for every push to `master` and every pull request.

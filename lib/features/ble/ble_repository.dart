@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 
 class BLERepository {
@@ -32,7 +33,7 @@ class BLERepository {
     FlutterBluePlus.scanResults.listen((results) {
       for (var result in results) {
         if (result.device.platformName == targetDeviceName) {
-          print("✅ Löydettiin EspressoPico – yhdistetään...");
+          debugPrint("✅ Löydettiin EspressoPico – yhdistetään...");
           _connectToDevice(result.device);
           return;
         }
@@ -48,14 +49,14 @@ class BLERepository {
     try {
       _device = device;
       await device.connect(autoConnect: false);
-      print("✅ Connect onnistui!");
+      debugPrint("✅ Connect onnistui!");
 
       _connectionController.add(true);
 
       // Kuuntele disconnectionia luotettavasti
       device.connectionState.listen((state) {
         if (state == BluetoothConnectionState.disconnected) {
-          print("❌ Laite irtosi (power off tai signaali katosi)");
+          debugPrint("❌ Laite irtosi (power off tai signaali katosi)");
           _device = null;
           _connectionController.add(false);
         }
@@ -64,7 +65,7 @@ class BLERepository {
       await Future.delayed(const Duration(milliseconds: 800));
       await _discoverServices();
     } catch (e) {
-      print("❌ Connect epäonnistui: $e");
+      debugPrint("❌ Connect epäonnistui: $e");
       _device = null;
       _connectionController.add(false);
     }
@@ -96,7 +97,7 @@ class BLERepository {
         }
       }
     } catch (e) {
-      print("❌ Service discovery error: $e");
+      debugPrint("❌ Service discovery error: $e");
     }
   }
 
